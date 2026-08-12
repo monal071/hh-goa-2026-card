@@ -771,10 +771,171 @@
     /* ─── FOOTER ─────────────────────────────────────────────────────────── */
     footer {
       text-align: center;
-      padding: 30px 20px;
+      padding: 10px 20px 30px;
       font-size: 12px;
       color: rgba(122,138,170,0.5);
       letter-spacing: 0.05em;
+    }
+
+    /* ─── TEAM BOOKMARK ──────────────────────────────────────────────────── */
+    .team-bookmark {
+      max-width: 520px;
+      margin: 0 auto 36px;
+      position: relative;
+    }
+
+    /* Ribbon tab */
+    .team-bookmark::before {
+      content: 'BUILT BY';
+      position: absolute;
+      top: -11px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--navy2);
+      border: 1px solid rgba(0,212,170,0.25);
+      border-radius: 20px;
+      padding: 2px 14px;
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .bookmark-card {
+      background: rgba(13, 22, 41, 0.8);
+      border: 1px solid rgba(0,212,170,0.18);
+      border-radius: 18px;
+      padding: 22px 28px 18px;
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* shimmer line on top of bookmark card */
+    .bookmark-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--teal), var(--saffron), var(--pink), transparent);
+      opacity: 0.7;
+    }
+
+    /* faint wave watermark */
+    .bookmark-card::after {
+      content: '〰〰〰';
+      position: absolute;
+      bottom: 8px; right: 14px;
+      font-size: 18px;
+      color: rgba(0,212,170,0.08);
+      letter-spacing: -4px;
+      pointer-events: none;
+    }
+
+    .team-name-block {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .team-label {
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .team-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--teal), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .team-wave {
+      font-family: 'Noto Sans Devanagari', sans-serif;
+      font-size: 11px;
+      color: rgba(0,212,170,0.45);
+      letter-spacing: 0.05em;
+    }
+
+    .team-members {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .member-chip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 30px;
+      padding: 6px 14px 6px 8px;
+      transition: all 0.25s ease;
+    }
+
+    .member-chip:hover {
+      border-color: rgba(0,212,170,0.4);
+      background: rgba(0,212,170,0.07);
+      transform: translateY(-2px);
+    }
+
+    .member-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      flex-shrink: 0;
+    }
+
+    .avatar-m {
+      background: linear-gradient(135deg, rgba(0,212,170,0.3), rgba(0,212,170,0.1));
+      border: 1px solid rgba(0,212,170,0.4);
+      color: var(--teal);
+    }
+
+    .avatar-j {
+      background: linear-gradient(135deg, rgba(255,149,0,0.3), rgba(255,149,0,0.1));
+      border: 1px solid rgba(255,149,0,0.4);
+      color: var(--saffron);
+    }
+
+    .member-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: 0.02em;
+      text-transform: capitalize;
+    }
+
+    .team-divider {
+      width: 1px; height: 30px;
+      background: rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 500px) {
+      .bookmark-card { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .team-divider { display: none; }
     }
 
     /* ─── RESPONSIVE CARD SCALE ──────────────────────────────────────────── */
@@ -1007,8 +1168,34 @@
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<!-- Team Bookmark -->
+<div class="team-bookmark">
+  <div class="bookmark-card">
+    <!-- Team name -->
+    <div class="team-name-block">
+      <div class="team-label">Team</div>
+      <div class="team-name">Tensor Tides</div>
+      <div class="team-wave">तरंग · तकनीक · गोवा</div>
+    </div>
+
+    <div class="team-divider"></div>
+
+    <!-- Members -->
+    <div class="team-members">
+      <div class="member-chip">
+        <div class="member-avatar avatar-m">M</div>
+        <span class="member-name">Monal</span>
+      </div>
+      <div class="member-chip">
+        <div class="member-avatar avatar-j">J</div>
+        <span class="member-name">Jal</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer>
-  HH Goa 2026 · Built with ❤️ · #FrameInGoa
+  HH Goa 2026 · #FrameInGoa
 </footer>
 
 <script>
