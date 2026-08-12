@@ -1520,9 +1520,14 @@
   /*  SHARE TO X                                                             */
   /* ─────────────────────────────────────────────────────────────────────── */
   async function shareToX() {
-    const name = document.getElementById('input-name').value.trim() || 'a builder';
-    const role = document.getElementById('input-role').value.trim();
-    const vibe = document.getElementById('card-title-tag').textContent.replace('✦ ','');
+    if (!generatedCanvas) {
+      showToast('⚡ Generate your card first!');
+      return;
+    }
+
+    const name  = document.getElementById('input-name').value.trim() || 'a builder';
+    const role  = document.getElementById('input-role').value.trim();
+    const vibe  = document.getElementById('card-title-tag').textContent.replace('✦ ','');
 
     const caption = [
       `I'm heading to Hacker House Goa 2026 🌊🔥`,
@@ -1530,30 +1535,58 @@
       `${name}${role ? ` · ${role}` : ''}`,
       vibe && vibe !== 'Builder Title' ? `✦ ${vibe}` : '',
       ``,
-      `28–31 Oct, Goa, India`,
+      `28–31 Oct · Goa, India 🇮🇳`,
       `#FrameInGoa #HackerHouseGoa #HHGoa2026`,
     ].filter(Boolean).join('\n');
 
-    // Try Web Share API first (mobile)
-    if (generatedCanvas && navigator.canShare) {
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(caption)}`;
+
+    // Detect mobile (touch device that can share files natively to Twitter app)
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile && navigator.canShare) {
+      // On mobile: use Web Share API — Twitter/X appears as an option in the native share sheet
       try {
         const blob = await new Promise(resolve => generatedCanvas.toBlob(resolve, 'image/png'));
-        const file = new File([blob], 'HH_Goa_2026_card.png', { type: 'image/png' });
+        const file = new File([blob], 'HH_Goa_2026.png', { type: 'image/png' });
         if (navigator.canShare({ files: [file] })) {
-          await navigator.share({ title: 'HH Goa 2026 Builder Card', text: caption, files: [file] });
+          await navigator.share({
+            title: 'HH Goa 2026 Builder Card',
+            text: caption,
+            files: [file],
+          });
           showToast('🎉 Shared!');
           return;
         }
       } catch(err) {
         if (err.name === 'AbortError') return;
-        // Fall through to Twitter intent
+        // fall through to Twitter intent
       }
     }
 
-    // Fallback: Twitter web intent
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(caption)}`;
-    window.open(twitterUrl, '_blank', 'noopener,noreferrer');
-    showToast('🐦 Opening X — attach your downloaded image!');
+    // Desktop (or mobile fallback): auto-download the card image + open Twitter intent
+    // Step 1 — silently download the image
+    try {
+      const canvas = await html2canvas(document.getElementById('id-card'), {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#080d1a',
+        logging: false,
+      });
+      const dataUrl = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      const safeName = name.replace(/\s+/g, '_');
+      a.download = `HH_Goa_2026_${safeName}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch(e) { /* continue even if download fails */ }
+
+    // Step 2 — open Twitter compose window with pre-filled caption
+    window.open(twitterUrl, '_blank', 'noopener,noreferrer,width=600,height=600');
+    showToast('✅ Image saved! Attach it in the tweet that just opened 📎');
   }
 
   /* ─────────────────────────────────────────────────────────────────────── */
