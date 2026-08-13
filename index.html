@@ -259,6 +259,65 @@
 
     select option { background: #0d1629; color: var(--white); }
 
+    /* ─── ADJUST PHOTO PANEL ─────────────────────────────────────────────── */
+    .adjust-panel {
+      margin-top: 20px;
+      background: #1a2a1f;
+      border: 1px solid rgba(0,212,170,0.15);
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+
+    .adjust-panel .panel-title {
+      margin-bottom: 16px;
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .slider-row label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #f0ead8;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .slider-row input[type='range'] {
+      width: 100%;
+      height: 4px;
+      accent-color: #f26522;
+      cursor: pointer;
+    }
+
+    .adjust-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn-adjust {
+      flex: 1;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      color: var(--white);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-adjust:hover { background: rgba(255,255,255,0.12); }
+
     /* Generate btn */
     .btn-generate {
       width: 100%;
@@ -1140,6 +1199,27 @@
         </select>
       </div>
 
+      <!-- Adjust Photo -->
+      <div class="adjust-panel" id="adjust-panel" style="display:none;">
+        <div class="panel-title">Adjust Photo</div>
+        <div class="slider-row">
+          <label>Zoom</label>
+          <input type="range" id="adj-zoom" min="100" max="300" value="100" oninput="applyAdjust()" />
+        </div>
+        <div class="slider-row">
+          <label>Left / Right</label>
+          <input type="range" id="adj-x" min="-100" max="100" value="0" oninput="applyAdjust()" />
+        </div>
+        <div class="slider-row">
+          <label>Up / Down</label>
+          <input type="range" id="adj-y" min="-100" max="100" value="0" oninput="applyAdjust()" />
+        </div>
+        <div class="adjust-btns">
+          <button class="btn-adjust" onclick="resetAdjust()">Reset</button>
+          <button class="btn-adjust" onclick="flipPhoto()">Flip</button>
+        </div>
+      </div>
+
       <!-- Generate btn -->
       <button class="btn-generate" id="btn-generate" onclick="generateCard()">
         <div class="spinner" id="gen-spinner"></div>
@@ -1387,7 +1467,35 @@
     const placeholder = document.getElementById('card-placeholder');
     img.src = src;
     img.style.display = 'block';
+    img.style.transform = 'scale(1) translate(0%, 0%)';
+    img.style.transformOrigin = 'center center';
     placeholder.style.display = 'none';
+    document.getElementById('adjust-panel').style.display = 'block';
+    resetAdjust();
+  }
+
+  let photoFlipped = false;
+
+  function applyAdjust() {
+    const img = document.getElementById('card-photo');
+    const zoom = document.getElementById('adj-zoom').value / 100;
+    const x    = document.getElementById('adj-x').value;
+    const y    = document.getElementById('adj-y').value;
+    const flip = photoFlipped ? ' scaleX(-1)' : '';
+    img.style.transform = `scale(${zoom}) translate(${x}%, ${y}%)${flip}`;
+  }
+
+  function resetAdjust() {
+    document.getElementById('adj-zoom').value = 100;
+    document.getElementById('adj-x').value   = 0;
+    document.getElementById('adj-y').value   = 0;
+    photoFlipped = false;
+    applyAdjust();
+  }
+
+  function flipPhoto() {
+    photoFlipped = !photoFlipped;
+    applyAdjust();
   }
 
   /* ─────────────────────────────────────────────────────────────────────── */

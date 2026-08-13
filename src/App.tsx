@@ -126,7 +126,7 @@ const drawPhotoCircle = (
 const TEMPLATE_SRC = '/card-template.png'
 const TEMPLATE_W = 630   // px  (adjust to your actual image width)
 const TEMPLATE_H = 1000  // px  (adjust to your actual image height)
-const DEBUG_TEMPLATE_ONLY = true
+const DEBUG_TEMPLATE_ONLY = false
 
 // Overlay positions expressed as fractions of TEMPLATE_W / TEMPLATE_H
 // so they scale correctly at any canvas resolution.
@@ -413,7 +413,7 @@ function App() {
     }
     render()
     return () => { active = false }
-  }, [imageSrc, crop, displayName, displayId, qrDataUrl, templateImg])
+  }, [imageSrc, crop, displayName, displayRole, displayTitle, displayId, qrDataUrl, templateImg])
 
   const handleDownload = () => {
     const canvas = canvasRef.current
@@ -484,9 +484,17 @@ function App() {
           </div>
 
           <div className="cropPanel">
-            <div className="cropPanel__title">PHOTO CROP</div>
+            <div className="cropPanel__title">ADJUST PHOTO</div>
             <div className="sliderRow">
-              <label>Horizontal position</label>
+              <label className="sliderLabel">ZOOM</label>
+              <input
+                type="range" min="1" max="2.4" step="0.01"
+                value={crop.zoom}
+                onChange={(e) => setCrop((prev) => ({ ...prev, zoom: Number(e.target.value) }))}
+              />
+            </div>
+            <div className="sliderRow">
+              <label className="sliderLabel">LEFT / RIGHT</label>
               <input
                 type="range" min="0" max="100"
                 value={Math.round(crop.x * 100)}
@@ -494,23 +502,15 @@ function App() {
               />
             </div>
             <div className="sliderRow">
-              <label>Vertical position</label>
+              <label className="sliderLabel">UP / DOWN</label>
               <input
                 type="range" min="0" max="100"
                 value={Math.round(crop.y * 100)}
                 onChange={(e) => setCrop((prev) => ({ ...prev, y: Number(e.target.value) / 100 }))}
               />
             </div>
-            <div className="sliderRow">
-              <label>Zoom</label>
-              <input
-                type="range" min="1" max="2.4" step="0.01"
-                value={crop.zoom}
-                onChange={(e) => setCrop((prev) => ({ ...prev, zoom: Number(e.target.value) }))}
-              />
-            </div>
             <div className="buttonRow">
-              <button type="button" className="secondaryButton" onClick={handleResetCrop}>Reset crop</button>
+              <button type="button" className="secondaryButton" onClick={handleResetCrop}>Reset</button>
               <button type="button" className="secondaryButton" onClick={() => setCrop((prev) => ({ ...prev, flip: !prev.flip }))}>Flip</button>
             </div>
           </div>
